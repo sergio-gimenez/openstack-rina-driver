@@ -1,4 +1,33 @@
-# Code samples for OpenStack Networking Cookbook
+# OpenStack ML2 RINA driver implememtation
+
+# Load a ML2 driver to OpenStack
+
+1. Copy the driver file into `/opt/stack/neutron/neutron/plugins/ml2/drivers`
+
+2. Update the `/etc/neutron/plugins/ml2/ml2_conf.ini` configuration file
+    * In the `[ml2]` section of the file, configure mechanism_drivers, as follows:
+    ```
+    [ml2]
+    ... 
+    mechanism_drivers = ovn,logger,cookbook
+    ```
+3. Open the `/opt/stack/neutron/neutron.egg-info/entry_points.txt`
+4. In the [neutron.ml2.mechanism_drivers] section of the file, configure the Python class that needs to be loaded for the mechanism driver named `cookbook`.
+  ```
+  [neutron.ml2.mechanism_drivers]
+  ...
+  cookbook = neutron.plugins.ml2.drivers.ch10_ml2_mech_driver:CookbookMechanismDriver
+  ```
+5. Restart the Neutron services in your DevStack setup.
+  ```
+  python3 $(which neutron-server) --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini --log-file ./server.log
+  ```
+
+  * Here we are passing the neutron config default file, the modified `ml2/ml2_conf.ini` and we are keeping a log of all this info in server.log`
+  
+
+
+### Code samples for OpenStack Networking Cookbook
 #### Author(s): Sriram Subramanian and Chandan Dutta Chowdhury
 #### Published by: Packt Publishing
 
