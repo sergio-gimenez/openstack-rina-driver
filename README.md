@@ -56,6 +56,68 @@ Note that you have to download the rc file of the project you are working on
 
 ## Processing API requests for a Network
 
+There are two ways of creating a network: using the GUI or using the CLI.
+
+### Using the Horizon GUI
+
+[Muhammad Afzal](https://community.cisco.com/t5/user/viewprofilepage/user-id/376120) (Cisco Employee) has [written a tutorial](https://community.cisco.com/t5/unified-computing-system-blogs/writing-your-own-openstack-neutron-ml2-driver-for-cisco-ucs/ba-p/4124753) on how to deploy a ML2 mech driver.
+
+In this short video he shows a demo of his workign ML2 driver implementation and shows how to create a netwok using the GUI:
+
+[![create_network_example](img/video_screenshot.png)](https://www.youtube.com/watch?v=k20XZZ4fQpw)
+
+### Using the Openstack CLI
+
+First let's see the networks are already up in openstack:
+
+```source
+$ openstack network list
+
++--------------------------------------+---------+----------------------------------------------------------------------------+
+| ID                                   | Name    | Subnets                                                                    |
++--------------------------------------+---------+----------------------------------------------------------------------------+
+| 9273af61-890f-47b5-bc03-384d12b2089e | public  | 8646b776-2ac7-4ed5-b76c-7620b9225cbe, ef9e99f3-afd5-491f-bae9-efea1081cac2 |
+| f9cb8ef8-d218-43f0-a3bc-0cddaaec0e35 | private | 80b5d45f-f53d-4649-af52-cd4af54d82ff, cfb4b9fb-5fe9-404f-bc85-d8677f559187 |
++--------------------------------------+---------+----------------------------------------------------------------------------+
+```
+> In my case there are two existing networks: `public` and `private` (the NAT network an the host network, respectively).
+
+Now let's create a network using the CLI:
+
+```source
+openstack network create Net1
+```
+
+That command should create a new network called `Net1`. Let's check it:
+
+```source
+$ openstack network list
+
++--------------------------------------+---------+----------------------------------------------------------------------------+
+| ID                                   | Name    | Subnets                                                                    |
++--------------------------------------+---------+----------------------------------------------------------------------------+
+| 9273af61-890f-47b5-bc03-384d12b2089e | public  | 8646b776-2ac7-4ed5-b76c-7620b9225cbe, ef9e99f3-afd5-491f-bae9-efea1081cac2 |
+| aaf1aa8e-9cc4-4131-a27e-801b94299e37 | Net1    |                                                                            |
+| f9cb8ef8-d218-43f0-a3bc-0cddaaec0e35 | private | 80b5d45f-f53d-4649-af52-cd4af54d82ff, cfb4b9fb-5fe9-404f-bc85-d8677f559187 |
++--------------------------------------+---------+----------------------------------------------------------------------------+
+```
+
+Let's check now that our ML2 has been called to create the network. In my case I have the `server.log` i the home folder.
+
+```source
+$ cat ~/server.log | grep neutron.plugins.ml2.drivers.my_mechanism
+
+INFO neutron.plugins.ml2.drivers.my_mechanism [None req-6cb3d7ba-3cb2-482f-b4a9-7dbfd4055ebd None None] Hello, mydriver initialize
+INFO neutron.plugins.ml2.drivers.my_mechanism [None req-9f6de529-c63a-4e29-8490-fd1e88df4579 demo admin] Hello, inside create_network_postcommit
+INFO neutron.plugins.ml2.drivers.my_mechanism [None req-9f6de529-c63a-4e29-8490-fd1e88df4579 demo admin] **** Create Network PostCommit ****
+INFO neutron.plugins.ml2.drivers.my_mechanism [None req-9f6de529-c63a-4e29-8490-fd1e88df4579 demo admin] Current Network Name: Net1
+INFO neutron.plugins.ml2.drivers.my_mechanism [None req-9f6de529-c63a-4e29-8490-fd1e88df4579 demo admin] Current Network Type: geneve
+INFO neutron.plugins.ml2.drivers.my_mechanism [None req-9f6de529-c63a-4e29-8490-fd1e88df4579 demo admin] **** Create Network PostCommit ****
+```
+
+Looking at the logs it can be seen that Openstack called the `create_network_postcommit` method of the ML2 driver.
+
+
 ## Code samples for OpenStack Networking Cookbook
 Author(s): Sriram Subramanian and Chandan Dutta Chowdhury
 Published by: Packt Publishing
