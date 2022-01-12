@@ -25,6 +25,22 @@ class MyDriver(api.MechanismDriver):
 
         LOG.info("**** %s ****" % (method_name))
 
+    def _log_subnet_information(self, method_name, current_context, prev_context, full_context):
+        LOG.info("**** %s ****" % (method_name))
+        LOG.info("Current Subnet Name: %s" %
+                 (current_context['name']))
+        LOG.info("Current Subnet CIDR: %s" %
+                 (current_context['cidr']))
+        # Extract the Network ID from the Subnet Context
+        network_id = current_context['network_id']
+        # Get the Neutron DB Session Handle
+        session = full_context._plugin_context.session
+        # Using ML2 DB API, fetch the Network that matches the Network ID
+        networks = ml2_db.get_network_segments(session, network_id)
+        LOG.info(
+            "Network associated to the Subnet: %s" % (networks))
+        LOG.info("**** %s ****" % (method_name))
+
     def initialize(self):
         """Perform driver initialization.
         Called after all drivers have been loaded and the database has
@@ -47,4 +63,10 @@ class MyDriver(api.MechanismDriver):
         previous_network_context = context.original
         self._log_network_information(
             "Update Network PostCommit", current_network_context, previous_network_context)
-    
+
+    def create_subnet_postcommit(self, context):
+        # Extract the current and the previous Subnet context
+        current_subnet_context = context.current
+        previous_subnet_context = context.original
+        self._log_subnet_information(
+            "Create Subnet PostCommit", current_subnet_context, previous_subnet_context, context)
