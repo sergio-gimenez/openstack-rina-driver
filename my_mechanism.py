@@ -3,6 +3,7 @@ from neutron_lib.plugins.ml2 import api
 
 LOG = logger.getLogger(__name__)
 
+
 class MyDriver(api.MechanismDriver):
 
     def _log_network_information(self, method_name, current_context, prev_context):
@@ -39,3 +40,11 @@ class MyDriver(api.MechanismDriver):
         previous_network_context = context.original
         self._log_network_information(
             "Create Network PostCommit", current_network_context, previous_network_context)
+
+    def update_network_postcommit(self, context):
+        # Extract the current and the previous network context
+        current_network_context = context.current
+        previous_network_context = context.original
+        self._log_network_information(
+            "Update Network PostCommit", current_network_context, previous_network_context)
+    
