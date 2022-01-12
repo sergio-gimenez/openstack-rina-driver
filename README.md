@@ -135,6 +135,14 @@ INFO neutron.plugins.ml2.drivers.my_mechanism [None req-f04490a4-4ca7-4a6e-8ca8-
 INFO neutron.plugins.ml2.drivers.my_mechanism [None req-f04490a4-4ca7-4a6e-8ca8-8d2fe6b0c0c6 demo admin] **** Update Network PostCommit ****
 ```
 
+### Few comments about the OpenStack Network API
+
+The ML2 mechanism driver API  consists of the create, update and delete operations for the OpenStack Network. The API also supports methods to handle DB commit related triggers. Once the Network object has been committed to the database, the method `xxxxx_network_ postcommit` operation is invoked. In this example, we only extracted and printed the network name and type in the `server.log` file.
+
+Each of these methods can also pass a context parameter. The context parameter is very important as it contains the details of the Network being created or updated. In the case of an update operation, context also contains the Network information prior to the current update.
+
+Source: _[OpenStack Networking Cookbook](https://www.packtpub.com/virtualization-and-cloud/openstack-networking-cookbook), Chapter 10, pg 216._
+
 ## Code samples for OpenStack Networking Cookbook
 
 [OpenStack Networking Cookbook](https://www.packtpub.com/virtualization-and-cloud/openstack-networking-cookbook)
