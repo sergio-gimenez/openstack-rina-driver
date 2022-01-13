@@ -145,7 +145,21 @@ Source: _[OpenStack Networking Cookbook](https://www.packtpub.com/virtualization
 
 ## Proceessing API request for a subnet
 
+In order to create a subnet in the previously created `Net1` network, type in the CLI:
 
+```source
+openstack subnet create --network Net1 subnet1 --subnet-range 192.168.3.0/24
+```
+
+That will create a subnet called `subnet1` in the `Net1` network with the specified IP range. Let's check it in the logs:
+
+```source
+:~$ cat server.log | grep neutron.plugins.ml2.drivers.my_mechanism
+
+INFO neutron.plugins.ml2.drivers.my_mechanism [None req-c7135f1b-84e8-4ad5-93f4-2cdaa5b9f4e4 demo admin] **** Create Subnet PostCommit ****
+INFO neutron.plugins.ml2.drivers.my_mechanism [None req-c7135f1b-84e8-4ad5-93f4-2cdaa5b9f4e4 demo admin] Current Subnet Name: subnet1
+INFO neutron.plugins.ml2.drivers.my_mechanism [None req-c7135f1b-84e8-4ad5-93f4-2cdaa5b9f4e4 demo admin] Current Subnet CIDR: 192.168.3.0/24
+```
 
 ## Code samples for OpenStack Networking Cookbook
 
