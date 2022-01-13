@@ -143,6 +143,10 @@ Each of these methods can also pass a context parameter. The context parameter i
 
 Source: _[OpenStack Networking Cookbook](https://www.packtpub.com/virtualization-and-cloud/openstack-networking-cookbook), Chapter 10, pg 216._
 
+## Proceessing API request for a subnet
+
+
+
 ## Code samples for OpenStack Networking Cookbook
 
 [OpenStack Networking Cookbook](https://www.packtpub.com/virtualization-and-cloud/openstack-networking-cookbook)

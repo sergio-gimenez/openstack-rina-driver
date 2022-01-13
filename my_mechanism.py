@@ -39,10 +39,11 @@ class MyDriver(api.MechanismDriver):
         network_id = current_context['network_id']
         # Get the Neutron DB Session Handle
         session = full_context._plugin_context.session
-        # Using ML2 DB API, fetch the Network that matches the Network ID
-        network_segments = current_context.network_segments
-        LOG.info(
-            "Network associated to the Subnet: %s" % (network_segments))
+
+        # TODO Using ML2 DB API, fetch the Network that matches the Network ID
+        # network_segments = full_context.network_segments
+        # LOG.info(
+        #     "Network associated to the Subnet: %s" % (network_segments))
 
 
     def initialize(self):
