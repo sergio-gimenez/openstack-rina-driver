@@ -3,7 +3,7 @@ from oslo_log import log as logger
 # Import Neutron Database API
 from neutron_lib.plugins.ml2 import api
 # Import ML2 Database API
-from neutron_lib.plugins.ml2 import db as ml2_db
+from neutron_lib import db as ml2_db
 
 LOG = logger.getLogger(__name__)
 
