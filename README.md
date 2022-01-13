@@ -161,6 +161,52 @@ INFO neutron.plugins.ml2.drivers.my_mechanism [None req-c7135f1b-84e8-4ad5-93f4-
 INFO neutron.plugins.ml2.drivers.my_mechanism [None req-c7135f1b-84e8-4ad5-93f4-2cdaa5b9f4e4 demo admin] Current Subnet CIDR: 192.168.3.0/24
 ```
 
+## Proceessing API requests for a Port
+
+In order to create a router:
+
+```source
+~$ openstack router create router1
+```
+
+Let's check it's actually there:
+
+```source
+~$ openstack router list
+
++--------------------------------------+---------+--------+-------+----------------------------------+
+| ID                                   | Name    | Status | State | Project                          |
++--------------------------------------+---------+--------+-------+----------------------------------+
+| c75c4d68-a93a-431d-818d-e52d2f8463ca | router1 | ACTIVE | UP    | da968b4a5f8f4746a16779820e9809ac |
++--------------------------------------+---------+--------+-------+----------------------------------+
+```
+
+Now, let's add the router to our previously created subnet:
+
+```source
+~$ openstack router add subnet router1 subnet1
+```
+
+Let's check in the logs if the `create_port_postcommit` method has been called:
+
+```source
+~$ cat server.log | grep neutron.plugins.ml2.drivers.my_mechanism
+
+INFO neutron.plugins.ml2.drivers.my_mechanism [None req-4d47db40-2780-471a-8d5c-8d8d883f9a73 None None] Hello, mydriver initialize
+INFO neutron.plugins.ml2.drivers.my_mechanism [None req-af3e054c-6c0e-44e8-a820-22f7622012bc None None] Hello, mydriver initialize
+INFO neutron.plugins.ml2.drivers.my_mechanism [None req-a8e264af-5785-492e-8b7c-478c4a03df1f demo admin] **** Create Port PostCommit ****
+INFO neutron.plugins.ml2.drivers.my_mechanism [None req-a8e264af-5785-492e-8b7c-478c4a03df1f demo admin] Port Type: network:router_interface
+INFO neutron.plugins.ml2.drivers.my_mechanism [None req-a8e264af-5785-492e-8b7c-478c4a03df1f demo admin] IP Address of the Port: 192.168.3.1
+INFO neutron.plugins.ml2.drivers.my_mechanism [None req-a8e264af-5785-492e-8b7c-478c4a03df1f demo admin] Network name for the Port: Net1
+INFO neutron.plugins.ml2.drivers.my_mechanism [None req-a8e264af-5785-492e-8b7c-478c4a03df1f demo admin] Network type for the Port: geneve
+INFO neutron.plugins.ml2.drivers.my_mechanism [None req-a8e264af-5785-492e-8b7c-478c4a03df1f demo admin] Segmentation ID for the Port: 21036
+INFO neutron.plugins.ml2.drivers.my_mechanism [None req-a8e264af-5785-492e-8b7c-478c4a03df1f demo admin] **** Create Port PostCommit ****
+```
+
+
+
+
+
 ## Code samples for OpenStack Networking Cookbook
 
 [OpenStack Networking Cookbook](https://www.packtpub.com/virtualization-and-cloud/openstack-networking-cookbook)

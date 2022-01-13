@@ -10,23 +10,17 @@ LOG = logger.getLogger(__name__)
 
 class MyDriver(api.MechanismDriver):
 
-    def _log_network_information(self, method_name, current_context, prev_context):
-
+    def _log_port_information(self, method_name, context):
         LOG.info("**** %s ****" % (method_name))
-
-        # Print the Network Name using the context
-        LOG.info("Current Network Name: %s" %
-                 (current_context['name']))
-
-        # For create operation prev_context will be None.
-        if prev_context is not None:
-            LOG.info("Previous Network Name: %s" %
-                     (prev_context['name']))
-
-        # Print the Network Type
-        LOG.info("Current Network Type: %s" %
-                 current_context['provider:network_type'])
-
+        # Extract the current Port context
+        current_port_context = context.current
+        # Extract the associated Network Context
+        network_context = context.network
+        LOG.info("Port Type: %s" % (current_port_context['device_owner']))
+        LOG.info("IP Address of the Port: %s" % ((current_port_context['fixed_ips'][0])['ip_address']))
+        LOG.info("Network name for the Port: %s" % (network_context.current['name']))
+        LOG.info("Network type for the Port: %s" % (network_context.current['provider:network_type']))
+        LOG.info("Segmentation ID for the Port: %s" % (network_context.current['provider:segmentation_id']))
         LOG.info("**** %s ****" % (method_name))
 
     def _log_subnet_information(self, method_name, current_context, prev_context, full_context):
@@ -44,7 +38,6 @@ class MyDriver(api.MechanismDriver):
         # network_segments = full_context.network_segments
         # LOG.info(
         #     "Network associated to the Subnet: %s" % (network_segments))
-
 
     def initialize(self):
         """Perform driver initialization.
@@ -75,3 +68,6 @@ class MyDriver(api.MechanismDriver):
         previous_subnet_context = context.original
         self._log_subnet_information(
             "Create Subnet PostCommit", current_subnet_context, previous_subnet_context, context)
+
+    def create_port_postcommit(self, context):
+        self._log_port_information("Create Port PostCommit", context)
